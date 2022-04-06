@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.micol.prj.notice.service.NoticeMapper">
+	<select id="noticeSelectList"
+		resultType="co.micol.prj.notice.vo.NoticeVO">
+		<![CDATA[
+		SELECT *
+		FROM (
+			SELECT ROWNUM AS RNUM, T.*
+			FROM notice T
+			WHERE ROWNUM <= #{last} 
+			ORDER BY T.ID DESC
+		)
+		WHERE #{first} <= RNUM
+		]]>
+	</select>
+	<select id="noticeSelect">
+
+	</select>
+	<insert id="noticeInsert">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			SELECT
+			MAX(ID) + 1 FROM NOTICE
+		</selectKey>
+
+		insert into notice
+		values(#{id},#{title},#{content},#{wdate},0,#{fileName},#{uuidFile})
+
+	</insert>
+	<delete id="noticeDelete">
+
+	</delete>
+	<update id="noticeUpdate">
+
+	</update>
+</mapper>
