@@ -84,16 +84,8 @@
 		// 수정 ajax 요청
 		function userUpdate() {
 			//등록과 동일 : post->put  prepend -> replace
-			const ajax = new XMLHttpRequest(); //1. XMLHttpRequest 객체 생성
+			
 			const url = "http://localhost/myserver/users"; //2. REST API 서버 URL
-			ajax.onload = function () { 
-				let user = JSON.parse(ajax.response);
-				let newTr = makeTr(user);
-				let oldTr = document.querySelector('[data-id='+user.id+']')
-				document.getElementsByTagName("tbody")[0].replaceChild(newTr,oldTr);
-			};
-			ajax.open("PUT", url); 
-			ajax.setRequestHeader("Content-type", "application/json");
 			let id = form1.id.value;
 			let name = form1.name.value;
 			let password = form1.password.value;
@@ -103,8 +95,19 @@
 				name,
 				password,
 				role
-			}; //{id:id,name:name,password:password,role:role}
-			ajax.send(JSON.stringify(obj)); 
+			};
+
+			fetch(url, {method:"put",
+						headers : {"Content-type" : "application/json"},
+						body : JSON.stringify(obj)
+						})
+			.then(res=>res.json())
+			.then(res=>{
+				let newTr = makeTr(res);
+				let oldTr = document.querySelector('[data-id='+res.id+']')
+				document.getElementsByTagName("tbody")[0].replaceChild(newTr,oldTr);
+			})
+			
 		}
 		// 단건조회ajax 요청
 		function userSelect(tg) {
