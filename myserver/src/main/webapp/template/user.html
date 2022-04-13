@@ -183,7 +183,7 @@
 
 		function makeTr(user) {
 			let tr = document.createElement("tr");
-			tr.setAttribute("data-id", `${user.id}`);
+			tr.setAttribute("data-id", user.id);
 			tr.innerHTML = `<td class="text-center">${user.id}</td>
 					<td class="text-center">${user.password}</td>
 					<td class="text-center">${user.name}</td>
@@ -191,7 +191,6 @@
 					<td class="text-center">
 						<button class="btnUpd">조회</button>
 						<button class="btnDel">삭제</button>
-						
 					</td>`
 			return tr;
 		}
