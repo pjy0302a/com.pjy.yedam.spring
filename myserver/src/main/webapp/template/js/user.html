@@ -110,6 +110,7 @@
 		function userSelect(tg) {
 			const ajax = new XMLHttpRequest();
 			const userid = tg.closest("tr").children[0].innerHTML;
+			
 			const url = "http://localhost/myserver/users/" + userid;
 			ajax.onload = function () {
 				let user = JSON.parse(ajax.response);

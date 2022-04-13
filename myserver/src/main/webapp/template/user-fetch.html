@@ -111,7 +111,7 @@
 		}
 		// 단건조회ajax 요청
 		function userSelect(tg) {
-
+			console.log(tg);
 			const userid = tg.closest("tr").children[0].innerHTML;
 			const url = "http://localhost/myserver/users/" + userid;
 				

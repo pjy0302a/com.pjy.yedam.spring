@@ -101,19 +101,60 @@
 		// 수정버튼 : 직접이벤트
 		function userUpdate() {
 			//버튼 클릭이벤트
-			
+			const url = "http://localhost/myserver/users";
+			$('#btnUpdate').on('click',function(){
+				$.ajax({
+					url : url,
+					type : 'PUT',
+					contentType : "application/json",
+					data : JSON.stringify($("#form1").serializeObject())
+				}).done(function(response) {
+					let newTr = makeTr(response);
+					let oldTr = $("tr[data-id= '+ response.id + ']")
+					//let oldTr = document.querySelector('[data-id='+user.id+']');
+					//$("tbody tr").data('id');
+					console.log(newTr.html());
+					console.log(oldTr.html());
+					
+					//$("tbody").eq(0).replaceChild(newTr,oldTr);
+			})
+		})
 		}
 		// 조회버튼 : 그룹이벤트
-		function userSelect(tg) {
-			$("table").on("click",".btnUpd",function(){
+		function userSelect() {
+			$("tbody").on("click",".btnUpd",function(){
 			const userid = $(this).closest("tr").children().first().html();
+			//const useras = $(this).closest("tr").data("id");
 			console.log(userid);
+			const url = "http://localhost/myserver/users/" + userid;
+			$.ajax({
+				url : url,
+				type : 'GET'
+			}).done(function(response) {
+				form1.id.value = response.id;
+				form1.password.value = response.password;
+				form1.name.value = response.name;
+				form1.role.value = response.role;
 			})
-		}
+			})
+			}
+		
 		// 삭제버튼 : 그룹이벤트
 		function userDelete() {
-
+ 			
+			$("tbody").on("click",".btnDel",function(){
+			const userid = $(this).closest("tr").children().first().html();
+			console.log(userid)
+			const url = "http://localhost/myserver/users/" + userid;
+		 	$(this).closest("tr").remove();
+			$.ajax({
+				url : url,
+				type : 'DELETE'
+			}).done(function(response) {
+			})
+			}) 
 		}
+			
 
 		// 전체조회 ajax 요청 
 		function list() {
@@ -131,8 +172,9 @@
 		}
 
 		function makeTr(user) {
-			console.log(user)
+			
  			var $tr = $("<tr>").data("id",user.id);
+ 			
 			$("<td>").addClass("text-center").html(user.id).appendTo($tr);
 			$("<td>").addClass("text-center").html(user.password).appendTo($tr);
 			$("<td>").addClass("text-center").html(user.name).appendTo($tr);
