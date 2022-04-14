@@ -75,14 +75,7 @@
 	</div>
 <script src="../template/js/json.min.js"></script>
 	<script>
-		const tb = document.getElementsByTagName("table")[0];
-		tb.addEventListener("click", function () {
-			if (event.target.classList.contains("btnDel")) {
-				userDelete(event.target);
-			} else if (event.target.classList.contains("btnUpd")) {
-				userSelect(event.target);
-			}
-		});
+
 		// 등록버튼 : 직접이벤트
 		function userInsert() {
 			const url = "http://localhost/myserver/users";
@@ -110,10 +103,11 @@
 					data : JSON.stringify($("#form1").serializeObject())
 				}).done(function(response) {
 					let newTr = makeTr(response);
-					let oldTr = $("tr[data-id= '+ response.id + ']")
+					let oldTr = $(this).closest("tr").children().first().html();
+					//("[data-id=" + response.id + "]")
 					//let oldTr = document.querySelector('[data-id='+user.id+']');
 					//$("tbody tr").data('id');
-					console.log(newTr.html());
+					//console.log(newTr.html());
 					console.log(oldTr.html());
 					
 					//$("tbody").eq(0).replaceChild(newTr,oldTr);
@@ -124,7 +118,6 @@
 		function userSelect() {
 			$("tbody").on("click",".btnUpd",function(){
 			const userid = $(this).closest("tr").children().first().html();
-			//const useras = $(this).closest("tr").data("id");
 			console.log(userid);
 			const url = "http://localhost/myserver/users/" + userid;
 			$.ajax({
