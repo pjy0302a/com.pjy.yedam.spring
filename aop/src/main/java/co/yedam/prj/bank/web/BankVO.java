@@ -1,0 +1,10 @@
+package co.yedam.prj.bank.web;
+
+import lombok.Data;
+
+@Data
+public class BankVO {
+	private String accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIxMTAxMDA1ODYxIiwic2NvcGUiOlsiaW5xdWlyeSIsImxvZ2luIiwidHJhbnNmZXIiXSwiaXNzIjoiaHR0cHM6Ly93d3cub3BlbmJhbmtpbmcub3Iua3IiLCJleHAiOjE2NTgxMTU0NTIsImp0aSI6IjVjNzQ4MjExLWFlMmEtNDk5ZS1hMmU3LWM0YzA1MTczOWU0MCJ9.0EG_3bFIpdmjgqgC7LY2k1IQRiq0AvMY-vnBrQnT4eU"; 
+	private String fintechUseNum;
+	private String userSeqNo="1101005861";
+}
