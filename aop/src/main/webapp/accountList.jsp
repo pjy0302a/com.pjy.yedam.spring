@@ -10,25 +10,70 @@
 </head>
 <body>
 <h3>계좌리스트</h3>
-<div id = "list"></div>
+<div id = "list">
+	<div class="acc" data-usernum="12323232"><span>대구은행</span><span>1111222***</span></div>
+</div>
+<div id ="result">
+</div>
 	<script>
 		$.ajax("/prj/accountList")
 		.done(function(response) {
 			for (account of response) {
-				const div = $("<div>");
-				$("<span>").html(account.fintech_use_num).appendTo(div);
-				$("<span>").html(" 계좌닉 : " +account.account_alias).appendTo(div);
-				$("<span>").html(" 은행명 : " +account.bank_name).appendTo(div);
-				$("<button>").text("클릭").appendTo(div);
-				$("#list").append(div)
+				$("<div>").addClass("acc")
+				          .data("usenum",account.fintech_use_num)
+				.append($("<span>").html(account.fintech_use_num))
+				.append($("<span>").html(" 계좌닉 : " +account.account_alias))
+				.append($("<span>").html(" 은행명 : " +account.bank_name))
+				.append($("<button>").html("잔액조회").addClass("btnMoney"))
+				.append($("<span>").html(""))
+				.append($("<button>").html("거래내역").addClass("btnTrans"))
+				.appendTo($("#list"));
 			}
 		})
-		
-		$("#list").on("click","button", function() {
-			const fintechUseNum = $(this).parent().children().eq(0).html();
-			$.ajax("/prj/balance?fintechUseNum="+fintechUseNum)
-			.done(function(response) {
-				alert(response);
+		//잔액조회
+		$("#list").on("click",".btnMoney", function() {
+
+			console.log($(this).next());
+			var num = $(this).parent().children().eq(0).html();
+			
+			const btn = $(this);
+			$.ajax({
+				url:"/prj/balance",
+				data : {fintechUseNum : num}
+			})
+			.done(function(data) {
+				btn.next().remove()
+				$("<span>").html(data).insertAfter(btn);
+				
+				
+			})
+		})
+		//거래내역조회
+		$("#list").on("click",".btnTrans", function(){
+			$("#result").empty()
+			var num = $(this).parent().children().eq(0).html();
+			
+			$.ajax({
+				url:"/prj/transaction",
+				data : {fintechUseNum : num},
+				method : "POST"
+			})
+			.done(function(data) {
+				
+				for (account of data) {
+					
+					$("<div>")
+					.append( $("<span>").html(account.tran_date))
+					.append( $("<span>").html(account.tran_time))
+					.append( $("<span>").html(account.inout_type))
+					.append( $("<span>").html(account.tran_type))
+					.append( $("<span>").html(account.print_content))
+					.append( $("<span>").html(account.tran_amt))
+					.append( $("<span>").html(account.after_balance_amt))
+					.append( $("<span>").html(account.branch_name))
+					.appendTo($("#result"));
+					
+				} 
 			})
 		})
 	</script>
