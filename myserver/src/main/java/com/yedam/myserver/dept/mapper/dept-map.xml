@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yedam.myserver.dept.mapper.DeptDAO2">
+	<select id="findAll" resultType="Departments">
+		select * from departments 
+		<where>
+			<if test="department_id != null and department_id != '' ">
+				and department_id = #{department_id}
+			</if>
+			<if test="location_id != null and location_id != '' ">
+				and location_id = #{location_id}
+			</if>
+		</where>
+	</select>
+</mapper>

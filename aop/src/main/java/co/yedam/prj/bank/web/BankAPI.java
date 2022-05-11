@@ -22,11 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class BankAPI {
 	static String use_org_code = "M202200499";
+	
 	static String oob_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNMjAyMjAwNDk5Iiwic2NvcGUiOlsib29iIl0sImlzcyI6Imh0dHBzOi8vd3d3Lm9wZW5iYW5raW5nLm9yLmtyIiwiZXhwIjoxNjU4MTkwMDgxLCJqdGkiOiIwNzBiYmRkNC0wYjk5LTRkODktOTg1MS0zMzcxY2I2MmYwMDcifQ.iWQc-lxO9PK965jKaSfH3qSk4MWGt1tL6fw1QJtUxKQ";
 	static String client_id = "fc4191dd-ecdd-44ba-ae12-2743ae515382";
 	static String client_secret = "892130eb-1af7-43ad-be07-f3d2e8b15481";
 	static String redirect_uri = "http://localhost:800/html/callback.html";
 	static String grant_type = "authorization_code";
+	static String accessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIxMTAxMDA1ODYxIiwic2NvcGUiOlsiaW5xdWlyeSIsImxvZ2luIiwidHJhbnNmZXIiXSwiaXNzIjoiaHR0cHM6Ly93d3cub3BlbmJhbmtpbmcub3Iua3IiLCJleHAiOjE2NTgxMTU0NTIsImp0aSI6IjVjNzQ4MjExLWFlMmEtNDk5ZS1hMmU3LWM0YzA1MTczOWU0MCJ9.0EG_3bFIpdmjgqgC7LY2k1IQRiq0AvMY-vnBrQnT4eU";
 	public static String getSequence() {
 		long t = System.nanoTime();
 		String result = String.valueOf(t);
@@ -108,6 +110,7 @@ public class BankAPI {
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<AccountList> response = restTemplate.exchange(reqURL + "?" + param, HttpMethod.GET, request,
 				AccountList.class);
+		System.out.println(response.getBody().getRes_list());
 		return response.getBody().getRes_list();
 	}
 	
@@ -146,14 +149,14 @@ public class BankAPI {
 		return arr;
 	}
 	
-	public static String getRealName() {
+	public static Map getRealName(AccountVO vo) {
 		String reqURL = "https://testapi.openbanking.or.kr/v2.0/inquiry/real_name";
 		Map<String, String> param = new HashMap<>();
 		param.put("bank_tran_id", use_org_code + "U" + getSequence());
 		param.put("bank_code_std", "097");
-		param.put("account_num", "1234567890123456");
+		param.put("account_num", vo.getAccount_num());
 		param.put("account_holder_info_type", " ");
-		param.put("account_holder_info", "880101");
+		param.put("account_holder_info", vo.getAccount_holder_info());
 		param.put("tran_dtime", getDate());
 		String jsonValue="";
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -165,15 +168,36 @@ public class BankAPI {
 		}
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("content-type", "application/json; charset=UTF-8");
-		headers.set("Authorization", "Bearer" + oob_token);
+		headers.set("Authorization", "Bearer " + oob_token);
 
 		HttpEntity<String> request = new HttpEntity<String>(jsonValue,headers);
 
 		RestTemplate restTemplate = new RestTemplate();
 		Map response = restTemplate.postForObject(reqURL, request, Map.class);
+
+		//String realName = response.get("account_holder_name").toString();//이름출력
 		System.out.println(response);
-		String realName = response.get("account_holder_name").toString();//이름출력
+		return response;
+	}
+	public static String getUpdateInfo(AccountVO vo) {
+		String reqURL = "https://testapi.openbanking.or.kr/v2.0/account/update_info";
+		Map<String, String> param = new HashMap<>();
+		param.put("fintech_use_num", vo.getFintech_use_num());
+		param.put("account_alias", vo.getAccount_alias());
+		System.out.println(vo.getFintech_use_num() + vo.getAccount_alias());
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("content-type", "application/json; charset=UTF-8");
+		headers.set("Authorization", "Bearer" + accessToken);
+
+		HttpEntity<Map> request = new HttpEntity<Map>(param,headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		Map response = restTemplate.postForObject(reqURL, request, Map.class);
+		System.out.println(response);
+		String realName = (String) response.get("account_alias");//이름출력
+		System.out.println(realName);
 		return realName;
+		
 	}
 
 }

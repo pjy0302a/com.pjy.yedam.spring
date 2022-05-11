@@ -9,12 +9,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h3>계좌리스트</h3>
-<div id = "list">
-	<div class="acc" data-usernum="12323232"><span>대구은행</span><span>1111222***</span></div>
-</div>
-<div id ="result">
-</div>
+	<h3>계좌리스트</h3>
+	<div id="list">
+		<div class="acc" data-usernum="12323232">
+			<span>계좌번호</span><input type="text" id="num1"/><span>주민번호앞자리</span><input type="text" id="num2"/>
+			<button class="btnReal">실명인증하기</button>
+		</div>
+		<span>결과 : </span><div id="name"></div>
+	</div>
+	<div id="result"></div>
 	<script>
 		$.ajax("/prj/accountList")
 		.done(function(response) {
@@ -22,13 +25,58 @@
 				$("<div>").addClass("acc")
 				          .data("usenum",account.fintech_use_num)
 				.append($("<span>").html(account.fintech_use_num))
-				.append($("<span>").html(" 계좌닉 : " +account.account_alias))
+				.append($("<span>").html(" 계좌별칭 : "))
+				.append($("<input type=text>").val(account.account_alias))
+				.append($("<button>").html("변경").addClass("btnAlias"))
 				.append($("<span>").html(" 은행명 : " +account.bank_name))
+				.append($("<span>").html(" 계좌번호 : " +account.account_num_masked))
 				.append($("<button>").html("잔액조회").addClass("btnMoney"))
 				.append($("<span>").html(""))
 				.append($("<button>").html("거래내역").addClass("btnTrans"))
 				.appendTo($("#list"));
 			}
+		})
+		
+		//실명조회
+		$("#list").on("click",".btnReal", function() {
+
+			//console.log($(this).next());
+			var num = $("#num1").val();
+			var as = $("#num2").val();
+
+
+			 $.ajax({
+				url:"/prj/real_name",
+				method : "POST",
+				data : {
+						account_num : num,
+						account_holder_info : as
+						}
+				
+			})
+			.done(function(data) {
+				$("#name").html(data.account_holder_name);
+			}) 
+		})
+		//별명변경
+		$("#list").on("click",".btnAlias", function() {
+
+			console.log($(this).next());
+			var num = $(this).parent().children().eq(0).html();
+			var as = $(this).parent().find('input').val();
+			//console.log(num1);
+			//const btn = $(this);
+			 $.ajax({
+				url:"/prj/Update_info",
+				method : "POST",
+				data : {
+						fintech_use_num : num,
+						account_alias : as
+						}
+				
+			})
+			.done(function(data) {
+			}) 
 		})
 		//잔액조회
 		$("#list").on("click",".btnMoney", function() {

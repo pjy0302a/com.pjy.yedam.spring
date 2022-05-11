@@ -17,12 +17,12 @@ public class BankTest {
 		BankAPI.getTransaction(vo);
 	}
 	
-	//@Test
-	public void getRealName() {
-		String name = BankAPI.getRealName();
-		assertEquals(name, "홍길동");
-		
-	}
+	/*
+	 * //@Test public void getRealName() { String name = BankAPI.getRealName();
+	 * assertEquals(name, "홍길동");
+	 * 
+	 * }
+	 */
 	
 	//@Test
 	public void getBalance() {

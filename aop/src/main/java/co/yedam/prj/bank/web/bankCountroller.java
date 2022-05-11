@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -47,4 +49,14 @@ public class bankCountroller {
 	public List<Map> transaction(BankVO vo) {
 		return BankAPI.getTransaction(vo);
 	}
+	@PostMapping("/Update_info")
+	public String Update_info(AccountVO vo) {
+		return BankAPI.getUpdateInfo(vo);
+	}
+	@PostMapping("/real_name")
+	public Map real_name(AccountVO vo) {
+		return BankAPI.getRealName(vo);
+	}
+	
+	
 }
