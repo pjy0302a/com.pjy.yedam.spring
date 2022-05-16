@@ -6,24 +6,22 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
+
+@Data
 public class Employee {
+
 	public Employee() {}
 	
 	public Employee(String first_name) {
 		super();
 		this.first_name = first_name;
 	}
+	
 	private Integer department_id;
 	private Integer manager_id;
-	@JsonProperty(value = "pct")
+	@JsonProperty(value="pct")
 	private Integer commission_pct;
-	@Override
-	public String toString() {
-		return "Employee [department_id=" + department_id + ", manager_id=" + manager_id + ", commission_pct="
-				+ commission_pct + ", salary=" + salary + ", job_id=" + job_id + ", hire_date=" + hire_date
-				+ ", phone_number=" + phone_number + ", email=" + email + ", last_name=" + last_name + ", first_name="
-				+ first_name + ", employee_id=" + employee_id + ", department_name=" + department_name + "]";
-	}
 	private Integer salary;
 	private String job_id;
 	@JsonFormat(pattern = "yyyy-MM-dd")

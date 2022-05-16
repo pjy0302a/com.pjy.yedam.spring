@@ -18,8 +18,8 @@ public class EmpMapperTest {
 	@Autowired EmployeeMapper mapper;
 	
 	@Test
-	public void todoSelectList() {
-		System.out.println(mapper.findSalary() );
+	public void findDeptEmployees() {
+		System.out.println(mapper.findDeptEmployees());
 	}
 	
 	

@@ -2,9 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yedam.myserver.emp.mapper.EmployeeMapper"> 
 
-<select id="findEmployees"  resultType="employee">
+<resultMap type="EmpDeptAssociation" id="employeeMap">
+	<id     column="employee_id" property="employee_id"/>
+	<result column="last_name"   property="last_name"/>
+	<result column="first_name"  property="first_name"/>
+	<association property="dept" javaType="DepartmentsVO">
+		<id     column="department_id" property="department_id"/>
+		<result column="dept_manager_id" property="manager_id" />
+		<result column="location_id" property="location_id" />
+		<result column="department_name" property="department_name" />
+	</association>
+</resultMap>
+
+<resultMap type="DeptEmpCollection" id="departmentMap">
+	<id column="department_id" property="department_id"/>
+	<result column="manager_id" property="manager_id" />
+	<result column="location_id" property="location_id" />
+	<result column="department_name" property="department_name" />
+	<collection property="employees" ofType="Employee">
+		<id column="employee_id" property="employee_id"/>
+		<result column="last_name" property="last_name"/>
+		<result column="first_name" property="first_name"/>
+		<result column="email" property="email"/>
+	</collection>
+</resultMap> 
+
+<select id="findDeptEmployeesAlias"  resultType="EmpDeptAssociation">  
+	select d.department_id    "dept.department_id",
+		   d.department_name  "dept.department_name",
+	       d.location_id      "dept.location_id",
+	       d.manager_id       "dept.manager_id",
+	       e.employee_id,
+	       e.first_name,
+	       e.last_name,
+	       e.email	        
+	  from employees e, departments d
+	 where e.department_id = d.department_id
+	 order by employee_id  
+</select>
+
+<select id="findDeptEmployees"  resultMap="departmentMap">  
+	select d.department_id,
+		   d.department_name,
+	       d.location_id,
+	       d.manager_id,
+	       e.employee_id,
+	       e.first_name,
+	       e.last_name,
+	       e.email	        
+	  from employees e, departments d
+	 where e.department_id = d.department_id
+	 order by employee_id  
+</select>
+
+<select id="findEmployeesDept"  resultMap="employeeMap">  
+	select e.*,
+	       d.department_name,
+	       d.location_id,
+	       d.manager_id dept_manager_id
+	  from employees e, departments d
+	 where e.department_id = d.department_id
+	 order by employee_id  
+</select>
+
+<select id="findEmployees"  
+	    resultType="employee">  
 	select *
 	from employees
+	<where>
+		<if test="employee_id != null and employee_id != ''">
+			employee_id = #{employee_id}
+		</if>
+	</where>
 	order by employee_id  
 </select>
 
@@ -31,7 +100,7 @@
 	where employee_id = #{employee_id}
 </insert>
 
-<update id="merge" >
+<update id="merge" parameterType="employee">
 	update employees
 	   set first_name = #{first_name},
 		   last_name = #{last_name},
@@ -48,26 +117,21 @@
 	 order by job_id 
 </select>
 
-<select id="findDepartments" resultType="departments">
+<select id="findDepartments" 
+        resultType="departments">
 	select a.department_id, a.department_name 
 	  from departments a
 	 order by a.department_id 
 </select>
 
 <select id="findStat" resultType="map">
-SELECT DEPARTMENT_NAME as "departmentName",
-	   COUNT(*) 	   as "cnt",
-	   E.DEPARTMENT_ID as "departmentId"
-FROM EMPLOYEES E, DEPARTMENTS D
-WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID
-GROUP BY DEPARTMENT_NAME, E.DEPARTMENT_ID
-ORDER BY DEPARTMENT_NAME
+SELECT DEPARTMENT_NAME  as "departmentName", 
+       COUNT(*)         as "cnt",
+       E.DEPARTMENT_ID  as "departmentId"
+  FROM EMPLOYEES E, DEPARTMENTS D
+ WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID
+ GROUP BY DEPARTMENT_NAME, E.DEPARTMENT_ID
+ ORDER BY DEPARTMENT_NAME
 </select>
-<select id="findSalary" resultType="map">
-SELECT DEPARTMENT_NAME AS DEPARTMENTNAME, Round(AVG(SALARY)) AS SALARY
-FROM EMPLOYEES E, DEPARTMENTS D
-WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID
-GROUP BY DEPARTMENT_NAME
-ORDER BY DEPARTMENT_NAME
-</select>
+
 </mapper>
